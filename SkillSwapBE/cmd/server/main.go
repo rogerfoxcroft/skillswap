@@ -4,9 +4,9 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"skillswap-be/internal/database"
-	"skillswap-be/internal/handlers"
-	"skillswap-be/internal/middleware"
+	"skillswap/internal/database"
+	"skillswap/internal/handlers"
+	"skillswap/internal/middleware"
 
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
@@ -16,7 +16,7 @@ import (
 func main() {
 	// Load .env file in development
 	if os.Getenv("GO_ENV") != "production" {
-		if err := godotenv.Load(); err != nil {
+		if err := godotenv.Load(".env"); err != nil {
 			log.Println("No .env file found, using environment variables")
 		}
 	}
@@ -63,8 +63,10 @@ func main() {
 	// Protected routes (authentication required)
 	protected := api.PathPrefix("/protected").Subrouter()
 	protected.Use(middleware.EnsureValidToken(domain, audience))
+	protected.Use(middleware.EnsureUserExists()) // Automatically create users if they don't exist
 	protected.HandleFunc("/dashboard", handlers.GetUserDashboard).Methods("GET")
 	protected.HandleFunc("/profile", handlers.GetUserProfile).Methods("GET")
+	protected.HandleFunc("/profile", handlers.UpdateUserProfile).Methods("PUT")
 	protected.HandleFunc("/profile/{id}", handlers.GetUserProfile).Methods("GET")
 	protected.HandleFunc("/my-skills", handlers.GetMySkills).Methods("GET")
 
@@ -73,7 +75,7 @@ func main() {
 
 	// Setup CORS
 	c := cors.New(cors.Options{
-		AllowedOrigins:   []string{"http://localhost:3000"}, // React app origin
+		AllowedOrigins:   []string{"http://localhost:3000", "https://skillswap.softfox.com"},
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowedHeaders:   []string{"Authorization", "Content-Type"},
 		AllowCredentials: true,
