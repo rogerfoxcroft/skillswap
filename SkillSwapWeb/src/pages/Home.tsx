@@ -1,5 +1,6 @@
 import React from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
+import { clearAuth0State, debugAuth0State } from '../utils/auth-debug';
 
 const Home: React.FC = () => {
   const { isAuthenticated, loginWithRedirect, user } = useAuth0();
@@ -99,6 +100,37 @@ const Home: React.FC = () => {
             >
               Sign Up Free
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* Debug Section - Development Only */}
+      {process.env.NODE_ENV === 'development' && (
+        <div className="bg-gray-100 py-8">
+          <div className="mobile-container text-center">
+            <h3 className="text-lg font-semibold text-gray-800 mb-4">
+              🛠️ Development Debug Tools
+            </h3>
+            <div className="space-x-4">
+              <button
+                onClick={debugAuth0State}
+                className="bg-blue-500 text-white px-4 py-2 rounded text-sm hover:bg-blue-600"
+              >
+                Debug Auth0 State
+              </button>
+              <button
+                onClick={() => {
+                  clearAuth0State();
+                  window.location.reload();
+                }}
+                className="bg-red-500 text-white px-4 py-2 rounded text-sm hover:bg-red-600"
+              >
+                Clear Auth0 & Reload
+              </button>
+            </div>
+            <p className="text-sm text-gray-600 mt-2">
+              Check browser console for debug output
+            </p>
           </div>
         </div>
       )}

@@ -19,6 +19,16 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         audience: "skillswapapi",
         scope: "openid profile email"
       }}
+      useRefreshTokens={true}
+      cacheLocation="localstorage"
+      onRedirectCallback={(appState) => {
+        // Handle the redirect callback
+        window.history.replaceState(
+          {},
+          document.title,
+          appState?.returnTo || window.location.pathname
+        );
+      }}
     >
       <BrowserRouter>
         <App />

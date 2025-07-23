@@ -4,6 +4,7 @@ import { useAuth0 } from '@auth0/auth0-react';
 import Home from './pages/Home';
 import AuthButton from './components/AuthButton';
 import ProtectedRoute from './components/ProtectedRoute';
+import Auth0ErrorHandler from './components/Auth0ErrorHandler';
 import { useDashboard } from './hooks/useApi';
 
 // Protected dashboard component
@@ -170,28 +171,7 @@ const DashboardContent: React.FC = () => {
 };
 
 const App: React.FC = () => {
-  const { isLoading, error } = useAuth0();
-
-  if (error) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-red-50">
-        <div className="mobile-container text-center">
-          <h2 className="text-2xl font-bold text-red-900 mb-4">
-            Authentication Error
-          </h2>
-          <p className="text-red-700 mb-8">
-            {error.message}
-          </p>
-          <button
-            onClick={() => window.location.reload()}
-            className="btn-primary"
-          >
-            Try Again
-          </button>
-        </div>
-      </div>
-    );
-  }
+  const { isLoading } = useAuth0();
 
   if (isLoading) {
     return (
@@ -205,17 +185,19 @@ const App: React.FC = () => {
   }
 
   return (
-    <Routes>
-      <Route path="/" element={<Home />} />
-      <Route 
-        path="/dashboard" 
-        element={
-          <ProtectedRoute>
-            <Dashboard />
-          </ProtectedRoute>
-        } 
-      />
-    </Routes>
+    <Auth0ErrorHandler>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route 
+          path="/dashboard" 
+          element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          } 
+        />
+      </Routes>
+    </Auth0ErrorHandler>
   );
 };
 
