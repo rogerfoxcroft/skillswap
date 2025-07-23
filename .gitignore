@@ -99,6 +99,8 @@ out
 # Gatsby files
 .cache/
 public
+# Allow React/Vite public folders
+!SkillSwapWeb/public/
 
 # Vuepress build output
 .vuepress/dist
