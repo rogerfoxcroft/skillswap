@@ -3,10 +3,10 @@ package handlers
 import (
 	"encoding/json"
 	"net/http"
-	"skillswap-be/internal/database"
-	"skillswap-be/internal/middleware"
-	"skillswap-be/internal/models"
-	"skillswap-be/internal/repository"
+	"skillswap/internal/database"
+	"skillswap/internal/middleware"
+	"skillswap/internal/models"
+	"skillswap/internal/repository"
 	"github.com/gorilla/mux"
 )
 

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"skillswap-be/internal/models"
+	"skillswap/internal/models"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
