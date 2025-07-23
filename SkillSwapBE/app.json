@@ -1,0 +1,26 @@
+{
+  "name": "skillswap-backend",
+  "description": "SkillSwap Backend API - Go server with Auth0 JWT authentication",
+  "repository": "https://github.com/rogerfoxcroft/skillswap",
+  "keywords": ["go", "api", "auth0", "skillswap", "marketplace"],
+  "env": {
+    "AUTH0_DOMAIN": {
+      "description": "Auth0 domain (e.g., your-domain.auth0.com)",
+      "required": true
+    },
+    "AUTH0_AUDIENCE": {
+      "description": "Auth0 API audience identifier",
+      "value": "skillswapapi",
+      "required": true
+    },
+    "PORT": {
+      "description": "Port the server runs on",
+      "value": "8080"
+    }
+  },
+  "buildpacks": [
+    {
+      "url": "heroku/go"
+    }
+  ]
+}

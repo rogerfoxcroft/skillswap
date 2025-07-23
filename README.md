@@ -143,7 +143,7 @@ skillswap/
 
 ## 🚀 Deployment
 
-### Frontend
+### Frontend (SkillSwapWeb)
 Build for production:
 ```bash
 cd SkillSwapWeb
@@ -151,13 +151,27 @@ npm run build
 ```
 Deploy the `dist` folder to any static hosting service (Vercel, Netlify, AWS S3).
 
-### Backend
-Build for production:
-```bash
-cd SkillSwapBE
-make build
-```
-Deploy the binary to any cloud provider (AWS, GCP, Heroku).
+### Backend (SkillSwapBE) - Heroku
+The backend is configured for Heroku deployment:
+
+1. **Create Heroku app**:
+   ```bash
+   cd SkillSwapBE
+   heroku create your-skillswap-backend
+   ```
+
+2. **Set environment variables**:
+   ```bash
+   heroku config:set AUTH0_DOMAIN=foxcroft.uk.auth0.com
+   heroku config:set AUTH0_AUDIENCE=skillswapapi
+   ```
+
+3. **Deploy**:
+   ```bash
+   git subtree push --prefix SkillSwapBE heroku master
+   ```
+
+The `Procfile` and `app.json` files are included for automatic Heroku configuration.
 
 ## 🤝 Contributing
 

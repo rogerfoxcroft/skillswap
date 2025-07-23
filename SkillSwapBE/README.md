@@ -76,6 +76,48 @@ make run
 make test
 ```
 
+## Deployment
+
+### Heroku Deployment
+
+The application is configured for easy deployment to Heroku:
+
+1. **Install Heroku CLI** and login:
+   ```bash
+   heroku login
+   ```
+
+2. **Create a new Heroku app**:
+   ```bash
+   heroku create your-skillswap-backend
+   ```
+
+3. **Set environment variables**:
+   ```bash
+   heroku config:set AUTH0_DOMAIN=your-domain.auth0.com
+   heroku config:set AUTH0_AUDIENCE=skillswapapi
+   ```
+
+4. **Deploy to Heroku**:
+   ```bash
+   git push heroku master
+   ```
+
+5. **Verify deployment**:
+   ```bash
+   heroku logs --tail
+   heroku open
+   ```
+
+The `Procfile` and `app.json` are already configured for Heroku deployment.
+
+### Environment Variables
+
+Required environment variables for production:
+- `AUTH0_DOMAIN` - Your Auth0 domain
+- `AUTH0_AUDIENCE` - API audience identifier (skillswapapi)
+- `PORT` - Server port (automatically set by Heroku)
+
 ## Project Structure
 
 ```
@@ -86,6 +128,9 @@ SkillSwapBE/
 │   ├── middleware/      # HTTP middleware
 │   └── models/          # Data models
 ├── pkg/utils/           # Utility functions
+├── Procfile            # Heroku process file
+├── app.json            # Heroku app configuration
 ├── go.mod              # Go module definition
+├── Makefile            # Build commands
 └── README.md           # This file
 ```
