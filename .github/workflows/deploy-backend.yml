@@ -5,16 +5,11 @@ on:
     branches: [ master, main ]
     paths:
       - 'SkillSwapBE/**'
-      - 'main.go'
-      - 'go.mod'
-      - 'go.sum'
-      - 'Procfile'
       - '.github/workflows/deploy-backend.yml'
   pull_request:
     branches: [ master, main ]
     paths:
       - 'SkillSwapBE/**'
-      - 'main.go'
 
 jobs:
   deploy:
@@ -47,5 +42,22 @@ jobs:
         HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
         HEROKU_APP_NAME: ${{ secrets.HEROKU_APP_NAME }}
       run: |
+        # Create a temporary directory for deployment
+        mkdir -p /tmp/heroku-deploy
+        
+        # Copy SkillSwapBE contents to temp directory
+        cp -r SkillSwapBE/* /tmp/heroku-deploy/
+        
+        # Initialize git repo in temp directory
+        cd /tmp/heroku-deploy
+        git init
+        git config user.name "GitHub Actions"
+        git config user.email "actions@github.com"
+        
+        # Add and commit all files
+        git add .
+        git commit -m "Deploy backend to Heroku"
+        
+        # Add Heroku remote and push
         git remote add heroku https://heroku:${{ secrets.HEROKU_API_KEY }}@git.heroku.com/${{ secrets.HEROKU_APP_NAME }}.git
         git push heroku main --force

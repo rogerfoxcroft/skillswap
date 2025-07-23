@@ -3,7 +3,7 @@ package handlers
 import (
 	"encoding/json"
 	"net/http"
-	"skillswap-be/internal/models"
+	"skillswap/internal/models"
 	"time"
 	"github.com/gorilla/mux"
 )

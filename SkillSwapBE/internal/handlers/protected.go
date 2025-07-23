@@ -3,10 +3,10 @@ package handlers
 import (
 	"encoding/json"
 	"net/http"
-	"skillswap-be/internal/database"
-	"skillswap-be/internal/middleware"
-	"skillswap-be/internal/models"
-	"skillswap-be/internal/repository"
+	"skillswap/internal/database"
+	"skillswap/internal/middleware"
+	"skillswap/internal/models"
+	"skillswap/internal/repository"
 	"github.com/gorilla/mux"
 )
 
@@ -34,36 +34,17 @@ type ProfileResponse struct {
 }
 
 func GetUserDashboard(w http.ResponseWriter, r *http.Request) {
-	// Extract user info from JWT token
-	userClaims, err := middleware.GetUserFromContext(r.Context())
-	if err != nil {
+	// Get user from context (created by EnsureUserExists middleware)
+	user, ok := r.Context().Value("user").(*models.User)
+	if !ok {
 		http.Error(w, "Unable to get user information", http.StatusUnauthorized)
 		return
 	}
 
-	// Get database connection
+	// Get user profile with relationships
 	db := database.GetDB()
 	userRepo := repository.NewUserRepository(db)
-
-	// Get or create user from database
-	user, err := userRepo.GetUserByAuth0ID(userClaims.Sub)
-	if err != nil {
-		// User doesn't exist, create new user
-		user = &models.User{
-			Auth0ID:  userClaims.Sub,
-			Email:    userClaims.Email,
-			FullName: userClaims.Name,
-			Username: userClaims.Email, // Use email as username initially
-			Points:   0,
-			Rank:     models.RankNovice,
-		}
-		if err := userRepo.CreateUser(user); err != nil {
-			http.Error(w, "Failed to create user", http.StatusInternalServerError)
-			return
-		}
-	}
-
-	// Get user profile with relationships
+	
 	profile, err := userRepo.GetUserProfile(user.ID)
 	if err != nil {
 		http.Error(w, "Failed to get user profile", http.StatusInternalServerError)

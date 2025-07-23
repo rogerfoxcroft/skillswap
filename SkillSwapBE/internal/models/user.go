@@ -1,6 +1,7 @@
 package models
 
 import (
+	"math/rand"
 	"time"
 	"gorm.io/gorm"
 )
@@ -8,12 +9,12 @@ import (
 type UserRank string
 
 const (
-	RankNovice     UserRank = "Novice"
-	RankBeginner   UserRank = "Beginner"
-	RankIntermediate UserRank = "Intermediate"
-	RankAdvanced   UserRank = "Advanced"
-	RankExpert     UserRank = "Expert"
-	RankMaster     UserRank = "Master"
+	Novice        UserRank = "Novice"
+	Beginner      UserRank = "Beginner"
+	Intermediate  UserRank = "Intermediate"
+	Advanced      UserRank = "Advanced"
+	Expert        UserRank = "Expert"
+	Master        UserRank = "Master"
 )
 
 type User struct {
@@ -57,21 +58,26 @@ type UpdateUserRequest struct {
 func (u *User) CalculateRank() UserRank {
 	switch {
 	case u.Points >= 10000:
-		return RankMaster
+		return Master
 	case u.Points >= 5000:
-		return RankExpert
+		return Expert
 	case u.Points >= 2000:
-		return RankAdvanced
+		return Advanced
 	case u.Points >= 500:
-		return RankIntermediate
+		return Intermediate
 	case u.Points >= 100:
-		return RankBeginner
+		return Beginner
 	default:
-		return RankNovice
+		return Novice
 	}
 }
 
 // UpdateRank updates the user's rank based on current points
 func (u *User) UpdateRank() {
 	u.Rank = u.CalculateRank()
+}
+
+// GenerateRandomInt generates a random integer for unique usernames
+func GenerateRandomInt() int {
+	return rand.Intn(9999) + 1000
 }

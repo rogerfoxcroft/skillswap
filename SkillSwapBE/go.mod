@@ -1,4 +1,4 @@
-module skillswap-be
+module skillswap
 
 go 1.24.4
 

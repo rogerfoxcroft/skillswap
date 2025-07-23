@@ -16,7 +16,7 @@ import (
 func main() {
 	// Load .env file in development
 	if os.Getenv("GO_ENV") != "production" {
-		if err := godotenv.Load("SkillSwapBE/.env"); err != nil {
+		if err := godotenv.Load(".env"); err != nil {
 			log.Println("No .env file found, using environment variables")
 		}
 	}

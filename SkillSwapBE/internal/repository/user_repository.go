@@ -1,7 +1,7 @@
 package repository
 
 import (
-	"skillswap-be/internal/models"
+	"skillswap/internal/models"
 	"gorm.io/gorm"
 )
 
