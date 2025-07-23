@@ -1,0 +1,48 @@
+{
+  "name": "skillswap-backend",
+  "description": "SkillSwap Backend API - Go server with Auth0 JWT authentication and PostgreSQL",
+  "repository": "https://github.com/rogerfoxcroft/skillswap",
+  "logo": "https://skillswap.com/logo.png",
+  "keywords": ["go", "api", "auth0", "skillswap", "marketplace", "postgresql"],
+  "stack": "heroku-22",
+  "buildpacks": [
+    {
+      "url": "heroku/go"
+    }
+  ],
+  "formation": {
+    "web": {
+      "quantity": 1,
+      "size": "basic"
+    }
+  },
+  "addons": [
+    {
+      "plan": "heroku-postgresql:essential-0",
+      "as": "DATABASE"
+    }
+  ],
+  "env": {
+    "AUTH0_DOMAIN": {
+      "description": "Auth0 domain (e.g., your-domain.auth0.com)",
+      "value": "foxcroft.uk.auth0.com",
+      "required": true
+    },
+    "AUTH0_AUDIENCE": {
+      "description": "Auth0 API audience identifier",
+      "value": "skillswapapi",
+      "required": true
+    },
+    "GO_ENV": {
+      "description": "Go environment",
+      "value": "production"
+    },
+    "PORT": {
+      "description": "Port the server runs on",
+      "value": "8080"
+    }
+  },
+  "scripts": {
+    "postdeploy": "echo 'SkillSwap Backend deployed successfully!'"
+  }
+}

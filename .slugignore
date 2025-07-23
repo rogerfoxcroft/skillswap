@@ -1,0 +1,10 @@
+# Ignore frontend files during backend deployment
+SkillSwapWeb/
+*.md
+.git/
+.github/
+docs/
+screenshots/
+
+# Keep only SkillSwapBE for deployment
+!SkillSwapBE/

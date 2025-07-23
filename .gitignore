@@ -31,6 +31,7 @@ go.work
 .env.development.local
 .env.test.local
 .env.production.local
+SkillSwapBE/.env
 
 # Logs
 logs

@@ -152,26 +152,40 @@ npm run build
 Deploy the `dist` folder to any static hosting service (Vercel, Netlify, AWS S3).
 
 ### Backend (SkillSwapBE) - Heroku
-The backend is configured for Heroku deployment:
+The backend is configured for Heroku deployment from the root directory:
 
+#### Quick Deploy (Recommended)
+```bash
+# Run the deployment script
+./deploy-heroku.sh [app-name]
+```
+
+#### Manual Deploy
 1. **Create Heroku app**:
    ```bash
-   cd SkillSwapBE
    heroku create your-skillswap-backend
+   heroku addons:create heroku-postgresql:essential-0
    ```
 
 2. **Set environment variables**:
    ```bash
    heroku config:set AUTH0_DOMAIN=foxcroft.uk.auth0.com
    heroku config:set AUTH0_AUDIENCE=skillswapapi
+   heroku config:set GO_ENV=production
    ```
 
-3. **Deploy**:
+3. **Set buildpack and deploy**:
    ```bash
-   git subtree push --prefix SkillSwapBE heroku master
+   heroku buildpacks:set heroku/go
+   git push heroku master
    ```
 
-The `Procfile` and `app.json` files are included for automatic Heroku configuration.
+#### Deployment Features
+- ✅ **PostgreSQL Database** automatically provisioned
+- ✅ **Auto-migrations** run on startup
+- ✅ **Environment variables** configured
+- ✅ **CORS** enabled for frontend integration
+- ✅ **Go modules** automatically resolved
 
 ## 🤝 Contributing
 

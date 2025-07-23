@@ -1,0 +1,12 @@
+{
+  "name": "skillswap-monorepo",
+  "version": "1.0.0",
+  "description": "SkillSwap - Hyperlocal skill exchange marketplace",
+  "scripts": {
+    "heroku-prebuild": "cd SkillSwapBE && go mod tidy",
+    "heroku-postbuild": "cd SkillSwapBE && go build -o ../bin/skillswap-be cmd/server/main.go"
+  },
+  "keywords": ["skillswap", "marketplace", "education"],
+  "author": "",
+  "license": "MIT"
+}
