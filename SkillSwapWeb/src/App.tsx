@@ -76,15 +76,14 @@ const DashboardContent: React.FC = () => {
     console.log('Adding skill:', skill);
   };
 
-  const handleEditSkill = (skillId: string, skill: Partial<Skill>) => {
-    // TODO: Implement API call to edit skill
-    console.log('Editing skill:', skillId, skill);
-  };
+  // TODO: Implement skill editing functionality
+  // const handleEditSkill = (skillId: string, skill: Partial<Skill>) => {
+  //   console.log('Editing skill:', skillId, skill);
+  // };
 
-  const handleDeleteSkill = (skillId: string) => {
-    // TODO: Implement API call to delete skill
-    console.log('Deleting skill:', skillId);
-  };
+  // const handleDeleteSkill = (skillId: string) => {
+  //   console.log('Deleting skill:', skillId);
+  // };
 
   if (loading) {
     return (
@@ -301,8 +300,6 @@ const DashboardContent: React.FC = () => {
         <SkillsList
           skills={data.my_skills}
           onAddSkill={handleAddSkill}
-          onEditSkill={handleEditSkill}
-          onDeleteSkill={handleDeleteSkill}
         />
       )}
     </div>

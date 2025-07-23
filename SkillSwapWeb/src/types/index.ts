@@ -54,6 +54,9 @@ export interface Skill {
   duration: number;
   location: string;
   is_active: boolean;
+  level?: string;
+  rating?: number;
+  review_count?: number;
   created_at: string;
   updated_at: string;
 }

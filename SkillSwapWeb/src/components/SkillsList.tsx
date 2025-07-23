@@ -5,13 +5,10 @@ import { formatCurrency, getCurrencySymbol, getCurrencyForLocale, parseCurrencyI
 interface SkillsListProps {
   skills: Skill[];
   onAddSkill: (skill: Partial<Skill>) => void;
-  onEditSkill: (skillId: string, skill: Partial<Skill>) => void;
-  onDeleteSkill: (skillId: string) => void;
 }
 
-const SkillsList: React.FC<SkillsListProps> = ({ skills, onAddSkill, onEditSkill, onDeleteSkill }) => {
+const SkillsList: React.FC<SkillsListProps> = ({ skills, onAddSkill }) => {
   const [showAddForm, setShowAddForm] = useState(false);
-  const [editingSkill, setEditingSkill] = useState<string | null>(null);
   
   const [newSkill, setNewSkill] = useState({
     title: '',
@@ -196,29 +193,31 @@ const SkillsList: React.FC<SkillsListProps> = ({ skills, onAddSkill, onEditSkill
                     <span className="font-medium text-green-600">{formatCurrency(skill.price)}/session</span>
                     <span>{skill.duration} min</span>
                     <span>{skill.location}</span>
-                    <span>Level: {skill.level}</span>
-                    {skill.rating > 0 && (
+                    {skill.level && <span>Level: {skill.level}</span>}
+                    {skill.rating && skill.rating > 0 && (
                       <span className="flex items-center">
-                        ⭐ {skill.rating.toFixed(1)} ({skill.review_count} reviews)
+                        ⭐ {skill.rating.toFixed(1)} ({skill.review_count || 0} reviews)
                       </span>
                     )}
                   </div>
                 </div>
                 
+                {/* TODO: Implement edit/delete functionality
                 <div className="flex space-x-2 ml-4">
                   <button
-                    onClick={() => setEditingSkill(skill.id)}
+                    onClick={() => console.log('Edit skill:', skill.id)}
                     className="text-blue-600 hover:text-blue-800 text-sm font-medium"
                   >
                     Edit
                   </button>
                   <button
-                    onClick={() => onDeleteSkill(skill.id)}
+                    onClick={() => console.log('Delete skill:', skill.id)}
                     className="text-red-600 hover:text-red-800 text-sm font-medium"
                   >
                     Delete
                   </button>
                 </div>
+                */}
               </div>
             </div>
           ))}
