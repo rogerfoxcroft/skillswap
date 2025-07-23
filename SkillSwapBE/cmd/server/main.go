@@ -4,14 +4,34 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"skillswap-be/internal/database"
 	"skillswap-be/internal/handlers"
 	"skillswap-be/internal/middleware"
 
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
+	"github.com/joho/godotenv"
 )
 
 func main() {
+	// Load .env file in development
+	if os.Getenv("GO_ENV") != "production" {
+		if err := godotenv.Load(); err != nil {
+			log.Println("No .env file found, using environment variables")
+		}
+	}
+
+	// Initialize database connection
+	if err := database.Connect(); err != nil {
+		log.Fatalf("Failed to connect to database: %v", err)
+	}
+	defer database.Close()
+
+	// Run database migrations
+	if err := database.Migrate(); err != nil {
+		log.Fatalf("Failed to migrate database: %v", err)
+	}
+
 	// Auth0 configuration
 	domain := os.Getenv("AUTH0_DOMAIN")
 	if domain == "" {
@@ -45,6 +65,7 @@ func main() {
 	protected.Use(middleware.EnsureValidToken(domain, audience))
 	protected.HandleFunc("/dashboard", handlers.GetUserDashboard).Methods("GET")
 	protected.HandleFunc("/profile", handlers.GetUserProfile).Methods("GET")
+	protected.HandleFunc("/profile/{id}", handlers.GetUserProfile).Methods("GET")
 	protected.HandleFunc("/my-skills", handlers.GetMySkills).Methods("GET")
 
 	// Apply middleware

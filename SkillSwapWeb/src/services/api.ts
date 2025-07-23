@@ -11,11 +11,19 @@ export interface DashboardData {
 
 export interface UserProfile {
   id: string;
-  name: string;
+  auth0_id: string;
+  username: string;
   email: string;
+  full_name: string;
   location: string;
+  avatar?: string;
+  bio?: string;
+  points: number;
+  rank: string;
   rating: number;
-  join_date: string;
+  review_count: number;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface UserStats {
@@ -23,6 +31,34 @@ export interface UserStats {
   total_bookings: number;
   total_earnings: number;
   average_rating: number;
+  points: number;
+  rank: string;
+}
+
+export interface Review {
+  id: string;
+  reviewer_id: string;
+  reviewee_id: string;
+  booking_id?: string;
+  rating: number;
+  comment: string;
+  is_public: boolean;
+  reviewer: UserProfile;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ReviewSummary {
+  average_rating: number;
+  total_reviews: number;
+  rating_breakdown: { [key: number]: number };
+}
+
+export interface ProfileResponse {
+  user: UserProfile;
+  skills: Skill[];
+  reviews: Review[];
+  review_summary: ReviewSummary;
 }
 
 export interface Booking {
@@ -81,8 +117,9 @@ class ApiService {
     return response.json();
   }
 
-  async getUserProfile(token: string): Promise<UserProfile> {
-    const response = await fetch(`${API_BASE_URL}/protected/profile`, {
+  async getUserProfile(token: string, userId?: string): Promise<ProfileResponse> {
+    const endpoint = userId ? `/protected/profile/${userId}` : '/protected/profile';
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
       headers: this.getAuthHeaders(token),
     });
     

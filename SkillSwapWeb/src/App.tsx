@@ -2,6 +2,7 @@ import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { useAuth0 } from '@auth0/auth0-react';
 import Home from './pages/Home';
+import Profile from './pages/Profile';
 import AuthButton from './components/AuthButton';
 import ProtectedRoute from './components/ProtectedRoute';
 import Auth0ErrorHandler from './components/Auth0ErrorHandler';
@@ -158,13 +159,16 @@ const DashboardContent: React.FC = () => {
       </div>
 
       {/* Quick Actions */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <button className="btn-primary">
           Browse Skills
         </button>
         <button className="btn-secondary">
           Add New Skill
         </button>
+        <a href="/profile" className="btn-secondary text-center">
+          View My Profile
+        </a>
       </div>
     </div>
   );
@@ -193,6 +197,14 @@ const App: React.FC = () => {
           element={
             <ProtectedRoute>
               <Dashboard />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/profile/:userId?" 
+          element={
+            <ProtectedRoute>
+              <Profile />
             </ProtectedRoute>
           } 
         />
