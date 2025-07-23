@@ -26,11 +26,8 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
       cacheLocation="localstorage"
       onRedirectCallback={(appState) => {
         // Handle the redirect callback
-        window.history.replaceState(
-          {},
-          document.title,
-          appState?.returnTo || window.location.pathname
-        );
+        const targetUrl = appState?.returnTo || '/dashboard';
+        window.history.replaceState({}, document.title, targetUrl);
       }}
     >
       <BrowserRouter basename={basename}>

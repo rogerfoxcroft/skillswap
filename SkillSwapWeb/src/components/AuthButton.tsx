@@ -15,14 +15,14 @@ const AuthButton: React.FC = () => {
   if (isAuthenticated) {
     return (
       <div className="flex items-center space-x-4">
-        <span className="text-sm text-gray-700">
+        <span className="text-base font-medium text-gray-800">
           Hi, {user?.name || user?.email}
         </span>
         <button
           onClick={() => logout({ 
             logoutParams: { returnTo: window.location.origin } 
           })}
-          className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
+          className="bg-red-100 hover:bg-red-200 text-red-800 px-4 py-2 rounded-lg font-medium transition-colors"
         >
           Logout
         </button>
@@ -31,18 +31,21 @@ const AuthButton: React.FC = () => {
   }
 
   return (
-    <div className="flex items-center space-x-2">
+    <div className="flex items-center space-x-3">
       <button
-        onClick={() => loginWithRedirect()}
-        className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
+        onClick={() => loginWithRedirect({
+          appState: { returnTo: '/dashboard' }
+        })}
+        className="bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2 rounded-lg font-medium transition-colors"
       >
         Login
       </button>
       <button
         onClick={() => loginWithRedirect({ 
-          authorizationParams: { screen_hint: 'signup' } 
+          authorizationParams: { screen_hint: 'signup' },
+          appState: { returnTo: '/dashboard' }
         })}
-        className="btn-primary text-sm py-2 px-4"
+        className="btn-primary py-2 px-4"
       >
         Sign Up
       </button>

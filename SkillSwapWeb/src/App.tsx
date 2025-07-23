@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Routes, Route, Link } from 'react-router-dom';
 import { useAuth0 } from '@auth0/auth0-react';
 import Home from './pages/Home';
@@ -6,36 +6,70 @@ import Profile from './pages/Profile';
 import AuthButton from './components/AuthButton';
 import ProtectedRoute from './components/ProtectedRoute';
 import Auth0ErrorHandler from './components/Auth0ErrorHandler';
+import ProfileEditor from './components/ProfileEditor';
+import SkillsList from './components/SkillsList';
+import RankBadge from './components/RankBadge';
 import { useDashboard } from './hooks/useApi';
+import { UserProfile, Skill } from './types';
 
-// Protected dashboard component
-const Dashboard: React.FC = () => {
-  
+// Navigation component for authenticated pages
+const AuthenticatedLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
     <div className="min-h-screen bg-gray-50">
-      <nav className="bg-white shadow-sm border-b">
-        <div className="mobile-container py-4 flex justify-between items-center">
-          <div className="flex items-center space-x-3">
-            <img src="/logo.png" alt="SkillSwap" className="h-8 w-auto" />
-            <h1 className="text-xl font-bold text-gray-900">SkillSwap</h1>
+      <nav className="bg-white shadow-lg border-b-2 border-gray-200 sticky top-0 z-50">
+        <div className="container-responsive py-6 flex justify-between items-center">
+          <div className="flex items-center">
+            <Link to="/dashboard">
+              <img src="/logo.png" alt="SkillSwap" className="h-16 w-auto cursor-pointer" />
+            </Link>
           </div>
-          <AuthButton />
+          <div className="flex items-center">
+            <AuthButton />
+          </div>
         </div>
       </nav>
       
-      <DashboardContent />
+      {children}
     </div>
   );
+};
+
+// Protected dashboard component
+const Dashboard: React.FC = () => {
+  return <DashboardContent />;
 };
 
 // Separate component for dashboard content that uses the API
 const DashboardContent: React.FC = () => {
   const { data, loading, error } = useDashboard();
+  const [isEditingProfile, setIsEditingProfile] = useState(false);
+  const [currentView, setCurrentView] = useState<'overview' | 'profile' | 'skills'>('overview');
+
+  const handleSaveProfile = (updatedProfile: Partial<UserProfile>) => {
+    // TODO: Implement API call to save profile
+    console.log('Saving profile:', updatedProfile);
+    setIsEditingProfile(false);
+  };
+
+  const handleAddSkill = (skill: Partial<Skill>) => {
+    // TODO: Implement API call to add skill
+    console.log('Adding skill:', skill);
+  };
+
+  const handleEditSkill = (skillId: string, skill: Partial<Skill>) => {
+    // TODO: Implement API call to edit skill
+    console.log('Editing skill:', skillId, skill);
+  };
+
+  const handleDeleteSkill = (skillId: string) => {
+    // TODO: Implement API call to delete skill
+    console.log('Deleting skill:', skillId);
+  };
 
   if (loading) {
     return (
-      <div className="mobile-container py-8">
-        <div className="flex items-center justify-center">
+      <div className="container-responsive py-8">
+        <div className="flex items-center justify-center min-h-64">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
           <span className="ml-2 text-gray-600">Loading dashboard...</span>
         </div>
@@ -45,7 +79,7 @@ const DashboardContent: React.FC = () => {
 
   if (error) {
     return (
-      <div className="mobile-container py-8">
+      <div className="container-responsive py-8">
         <div className="bg-red-50 border border-red-200 rounded-lg p-4">
           <h3 className="text-red-800 font-semibold">Error loading dashboard</h3>
           <p className="text-red-600">{error}</p>
@@ -56,122 +90,203 @@ const DashboardContent: React.FC = () => {
 
   if (!data) {
     return (
-      <div className="mobile-container py-8">
+      <div className="container-responsive py-8">
         <div className="text-center text-gray-600">No data available</div>
       </div>
     );
   }
 
+  // Debug log to see what data we're getting
+  console.log('Dashboard data:', data);
+
   return (
-    <div className="mobile-container py-8 space-y-6">
-      {/* User Profile Card */}
-      <div className="bg-white rounded-lg shadow-md p-6">
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">
-          Welcome back, {data.user.name}! 👋
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <p className="text-gray-600">
-              <span className="font-medium">Email:</span> {data.user.email}
-            </p>
-            <p className="text-gray-600">
-              <span className="font-medium">Location:</span> {data.user.location}
-            </p>
+    <div className="container-responsive py-8">
+      {/* Header */}
+      <div className="mb-8">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+              Welcome back, {data.user.full_name || data.user.name}! 👋
+            </h1>
+            <p className="text-gray-600">Manage your profile and skills</p>
           </div>
-          <div className="space-y-2">
-            <p className="text-gray-600">
-              <span className="font-medium">Rating:</span> ⭐ {data.user.rating}
-            </p>
-            <p className="text-gray-600">
-              <span className="font-medium">Member since:</span> {data.user.join_date}
-            </p>
+          <div className="flex items-center space-x-4 mt-4 lg:mt-0">
+            <RankBadge rank={data.user?.rank} points={data.user?.points} />
+            <div className="text-right">
+              <div className="text-sm text-gray-500">Rating</div>
+              <div className="text-lg font-semibold">⭐ {data.user?.rating || 0}</div>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="bg-white p-4 rounded-lg shadow-md text-center">
-          <div className="text-2xl font-bold text-primary-600">{data.stats.total_skills_offered}</div>
-          <div className="text-sm text-gray-600">Skills Offered</div>
+      {/* Navigation Tabs */}
+      <div className="bg-white border border-gray-300 rounded-lg mb-8 shadow-md">
+        <div className="p-4 border-b border-gray-200">
+          <h2 className="text-lg font-semibold text-gray-900">Dashboard Sections</h2>
         </div>
-        <div className="bg-white p-4 rounded-lg shadow-md text-center">
-          <div className="text-2xl font-bold text-green-600">{data.stats.total_bookings}</div>
-          <div className="text-sm text-gray-600">Bookings</div>
-        </div>
-        <div className="bg-white p-4 rounded-lg shadow-md text-center">
-          <div className="text-2xl font-bold text-blue-600">${data.stats.total_earnings}</div>
-          <div className="text-sm text-gray-600">Earnings</div>
-        </div>
-        <div className="bg-white p-4 rounded-lg shadow-md text-center">
-          <div className="text-2xl font-bold text-yellow-600">⭐ {data.stats.average_rating}</div>
-          <div className="text-sm text-gray-600">Avg Rating</div>
-        </div>
+        <nav className="flex flex-wrap gap-2 p-4" role="tablist">
+          {[
+            { key: 'overview', label: 'Overview', icon: '📊' },
+            { key: 'profile', label: 'My Profile', icon: '👤' },
+            { key: 'skills', label: 'My Skills', icon: '🎯' },
+          ].map((tab) => (
+            <button
+              key={tab.key}
+              onClick={() => setCurrentView(tab.key as any)}
+              className={`flex items-center space-x-3 py-4 px-6 rounded-lg font-semibold text-base border-2 transition-all duration-200 ${
+                currentView === tab.key
+                  ? 'bg-blue-600 text-white border-blue-600 shadow-lg'
+                  : 'bg-gray-50 text-gray-700 border-gray-300 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-300'
+              }`}
+              role="tab"
+              aria-selected={currentView === tab.key}
+            >
+              <span className="text-xl">{tab.icon}</span>
+              <span>{tab.label}</span>
+            </button>
+          ))}
+        </nav>
       </div>
 
-      {/* My Skills */}
-      <div className="bg-white rounded-lg shadow-md p-6">
-        <h3 className="text-xl font-semibold text-gray-900 mb-4">My Skills</h3>
-        {data.my_skills.length > 0 ? (
-          <div className="space-y-3">
-            {data.my_skills.map((skill) => (
-              <div key={skill.id} className="border border-gray-200 rounded-lg p-4">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <h4 className="font-medium text-gray-900">{skill.title}</h4>
-                    <p className="text-sm text-gray-600 mt-1">{skill.description}</p>
-                    <div className="flex items-center mt-2 space-x-4">
-                      <span className="text-sm text-primary-600 font-medium">${skill.price}/session</span>
-                      <span className="text-sm text-gray-500">{skill.duration} min</span>
-                      <span className="text-sm text-gray-500">{skill.category}</span>
+      {/* Content */}
+      {currentView === 'overview' && (
+        <div className="space-y-8">
+          {/* Stats Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="bg-white p-6 rounded-lg shadow-md">
+              <div className="text-3xl font-bold text-primary-600 mb-2">{data.stats?.total_skills_offered || 0}</div>
+              <div className="text-sm text-gray-600">Skills Offered</div>
+            </div>
+            <div className="bg-white p-6 rounded-lg shadow-md">
+              <div className="text-3xl font-bold text-green-600 mb-2">{data.stats?.total_bookings || 0}</div>
+              <div className="text-sm text-gray-600">Total Bookings</div>
+            </div>
+            <div className="bg-white p-6 rounded-lg shadow-md">
+              <div className="text-3xl font-bold text-blue-600 mb-2">${data.stats?.total_earnings || 0}</div>
+              <div className="text-sm text-gray-600">Total Earnings</div>
+            </div>
+            <div className="bg-white p-6 rounded-lg shadow-md">
+              <div className="text-3xl font-bold text-yellow-600 mb-2">⭐ {data.stats?.average_rating || 0}</div>
+              <div className="text-sm text-gray-600">Average Rating</div>
+            </div>
+          </div>
+
+          {/* Recent Activity */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* Recent Skills */}
+            <div className="bg-white rounded-lg shadow-md p-6">
+              <h3 className="text-xl font-semibold text-gray-900 mb-4">Recent Skills</h3>
+              {(data.my_skills || []).slice(0, 3).map((skill) => (
+                <div key={skill.id} className="border-b border-gray-200 last:border-b-0 py-3">
+                  <h4 className="font-medium text-gray-900">{skill.title}</h4>
+                  <p className="text-sm text-gray-600 mt-1">{skill.category} • ${skill.price}/session</p>
+                </div>
+              ))}
+              {(data.my_skills || []).length === 0 && (
+                <p className="text-gray-500 text-sm">No skills added yet</p>
+              )}
+            </div>
+
+            {/* Recent Bookings */}
+            <div className="bg-white rounded-lg shadow-md p-6">
+              <h3 className="text-xl font-semibold text-gray-900 mb-4">Recent Bookings</h3>
+              {(data.recent_bookings || []).slice(0, 3).map((booking) => (
+                <div key={booking.id} className="border-b border-gray-200 last:border-b-0 py-3">
+                  <p className="font-medium text-gray-900">Booking #{booking.id.slice(0, 8)}</p>
+                  <p className="text-sm text-gray-600 mt-1">${booking.total_price} • {booking.status}</p>
+                </div>
+              ))}
+              {(data.recent_bookings || []).length === 0 && (
+                <p className="text-gray-500 text-sm">No recent bookings</p>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {currentView === 'profile' && (
+        <div className="max-w-4xl">
+          {isEditingProfile ? (
+            <ProfileEditor
+              profile={data.user}
+              onSave={handleSaveProfile}
+              onCancel={() => setIsEditingProfile(false)}
+            />
+          ) : (
+            <div className="bg-white rounded-lg shadow-md p-6">
+              <div className="flex justify-between items-start mb-6">
+                <h3 className="text-xl font-semibold text-gray-900">Profile Information</h3>
+                <button onClick={() => setIsEditingProfile(true)} className="btn-primary">
+                  Edit Profile
+                </button>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <h4 className="font-medium text-gray-900 mb-4">Personal Details</h4>
+                  <div className="space-y-3">
+                    <div>
+                      <span className="text-sm font-medium text-gray-500">Full Name</span>
+                      <p className="text-gray-900">{data.user.full_name || 'Not provided'}</p>
+                    </div>
+                    <div>
+                      <span className="text-sm font-medium text-gray-500">Username</span>
+                      <p className="text-gray-900">@{data.user.username}</p>
+                    </div>
+                    <div>
+                      <span className="text-sm font-medium text-gray-500">Email</span>
+                      <p className="text-gray-900">{data.user.email}</p>
+                    </div>
+                    <div>
+                      <span className="text-sm font-medium text-gray-500">Location</span>
+                      <p className="text-gray-900">{data.user.location || 'Not provided'}</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div>
+                  <h4 className="font-medium text-gray-900 mb-4">Community Standing</h4>
+                  <div className="space-y-3">
+                    <div>
+                      <span className="text-sm font-medium text-gray-500">Points</span>
+                      <p className="text-gray-900">{data.user.points}</p>
+                    </div>
+                    <div>
+                      <span className="text-sm font-medium text-gray-500">Rank</span>
+                      <p className="text-gray-900">{data.user.rank}</p>
+                    </div>
+                    <div>
+                      <span className="text-sm font-medium text-gray-500">Rating</span>
+                      <p className="text-gray-900">⭐ {data.user.rating} ({data.user.review_count} reviews)</p>
+                    </div>
+                    <div>
+                      <span className="text-sm font-medium text-gray-500">Member Since</span>
+                      <p className="text-gray-900">{new Date(data.user.created_at).toLocaleDateString()}</p>
                     </div>
                   </div>
                 </div>
               </div>
-            ))}
-          </div>
-        ) : (
-          <p className="text-gray-600">No skills offered yet.</p>
-        )}
-      </div>
-
-      {/* Recent Bookings */}
-      <div className="bg-white rounded-lg shadow-md p-6">
-        <h3 className="text-xl font-semibold text-gray-900 mb-4">Recent Bookings</h3>
-        {data.recent_bookings.length > 0 ? (
-          <div className="space-y-3">
-            {data.recent_bookings.map((booking) => (
-              <div key={booking.id} className="border border-gray-200 rounded-lg p-4">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <p className="font-medium text-gray-900">Booking #{booking.id}</p>
-                    <p className="text-sm text-gray-600 mt-1">{booking.notes}</p>
-                    <div className="flex items-center mt-2 space-x-4">
-                      <span className="text-sm text-green-600 font-medium">${booking.total_price}</span>
-                      <span className="text-sm text-gray-500">Status: {booking.status}</span>
-                    </div>
-                  </div>
+              
+              {data.user.bio && (
+                <div className="mt-6">
+                  <h4 className="font-medium text-gray-900 mb-2">Bio</h4>
+                  <p className="text-gray-700">{data.user.bio}</p>
                 </div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <p className="text-gray-600">No recent bookings.</p>
-        )}
-      </div>
+              )}
+            </div>
+          )}
+        </div>
+      )}
 
-      {/* Quick Actions */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <button className="btn-primary">
-          Browse Skills
-        </button>
-        <button className="btn-secondary">
-          Add New Skill
-        </button>
-        <Link to="/profile" className="btn-secondary text-center">
-          View My Profile
-        </Link>
-      </div>
+      {currentView === 'skills' && (
+        <SkillsList
+          skills={data.my_skills}
+          onAddSkill={handleAddSkill}
+          onEditSkill={handleEditSkill}
+          onDeleteSkill={handleDeleteSkill}
+        />
+      )}
     </div>
   );
 };
@@ -198,7 +313,9 @@ const App: React.FC = () => {
           path="/dashboard" 
           element={
             <ProtectedRoute>
-              <Dashboard />
+              <AuthenticatedLayout>
+                <Dashboard />
+              </AuthenticatedLayout>
             </ProtectedRoute>
           } 
         />
@@ -206,7 +323,9 @@ const App: React.FC = () => {
           path="/profile/:userId?" 
           element={
             <ProtectedRoute>
-              <Profile />
+              <AuthenticatedLayout>
+                <Profile />
+              </AuthenticatedLayout>
             </ProtectedRoute>
           } 
         />

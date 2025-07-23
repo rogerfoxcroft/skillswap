@@ -1,14 +1,14 @@
 import React from 'react';
 
 interface RankBadgeProps {
-  rank: string;
-  points: number;
+  rank?: string;
+  points?: number;
   size?: 'sm' | 'md' | 'lg';
 }
 
-const RankBadge: React.FC<RankBadgeProps> = ({ rank, points, size = 'md' }) => {
+const RankBadge: React.FC<RankBadgeProps> = ({ rank = 'Novice', points = 0, size = 'md' }) => {
   const getRankColor = (rank: string) => {
-    switch (rank.toLowerCase()) {
+    switch (rank?.toLowerCase() || 'novice') {
       case 'novice':
         return 'bg-gray-100 text-gray-800 border-gray-300';
       case 'beginner':
@@ -27,7 +27,7 @@ const RankBadge: React.FC<RankBadgeProps> = ({ rank, points, size = 'md' }) => {
   };
 
   const getRankIcon = (rank: string) => {
-    switch (rank.toLowerCase()) {
+    switch (rank?.toLowerCase() || 'novice') {
       case 'novice':
         return '🌱';
       case 'beginner':
@@ -46,7 +46,7 @@ const RankBadge: React.FC<RankBadgeProps> = ({ rank, points, size = 'md' }) => {
   };
 
   const getNextRankThreshold = (rank: string) => {
-    switch (rank.toLowerCase()) {
+    switch (rank?.toLowerCase() || 'novice') {
       case 'novice':
         return 100;
       case 'beginner':

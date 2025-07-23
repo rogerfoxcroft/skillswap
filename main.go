@@ -63,6 +63,7 @@ func main() {
 	// Protected routes (authentication required)
 	protected := api.PathPrefix("/protected").Subrouter()
 	protected.Use(middleware.EnsureValidToken(domain, audience))
+	protected.Use(middleware.EnsureUserExists()) // Automatically create users if they don't exist
 	protected.HandleFunc("/dashboard", handlers.GetUserDashboard).Methods("GET")
 	protected.HandleFunc("/profile", handlers.GetUserProfile).Methods("GET")
 	protected.HandleFunc("/profile/{id}", handlers.GetUserProfile).Methods("GET")

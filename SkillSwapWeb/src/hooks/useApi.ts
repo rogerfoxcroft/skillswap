@@ -18,10 +18,14 @@ export const useApi = () => {
         }
       });
       
+      console.log('Token obtained successfully'); // Debug log
       return await apiCall(token);
     } catch (error) {
       console.error('API call failed:', error);
-      throw error;
+      if (error instanceof Error) {
+        throw new Error(`API Error: ${error.message}`);
+      }
+      throw new Error('Unknown API error occurred');
     }
   };
 
@@ -38,7 +42,7 @@ export const useDashboard = () => {
     try {
       setLoading(true);
       setError(null);
-      const dashboardData = await callApi(apiService.getUserDashboard);
+      const dashboardData = await callApi((token) => apiService.getUserDashboard(token));
       setData(dashboardData);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch dashboard data');

@@ -1,16 +1,25 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
+import { useNavigate } from 'react-router-dom';
 import { clearAuth0State, debugAuth0State } from '../utils/auth-debug';
 
 const Home: React.FC = () => {
   const { isAuthenticated, loginWithRedirect, user } = useAuth0();
+  const navigate = useNavigate();
+
+  // Redirect to dashboard if user is authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/dashboard');
+    }
+  }, [isAuthenticated, navigate]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-50 to-primary-100">
       {/* Hero Section */}
-      <div className="mobile-container py-12">
+      <div className="container-narrow py-12">
         <div className="text-center">
-          <img src="/logo.png" alt="SkillSwap" className="h-20 w-auto mx-auto mb-6" />
+          <img src="/logo.png" alt="SkillSwap" className="h-32 w-auto mx-auto mb-6" />
           <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
             SkillSwap
           </h1>
@@ -25,7 +34,9 @@ const Home: React.FC = () => {
           {!isAuthenticated ? (
             <div className="space-y-4">
               <button
-                onClick={() => loginWithRedirect()}
+                onClick={() => loginWithRedirect({
+                  appState: { returnTo: '/dashboard' }
+                })}
                 className="btn-primary w-full md:w-auto md:mr-4"
               >
                 Get Started
@@ -108,7 +119,7 @@ const Home: React.FC = () => {
       {/* Debug Section - Development Only */}
       {import.meta.env.DEV && (
         <div className="bg-gray-100 py-8">
-          <div className="mobile-container text-center">
+          <div className="container-narrow text-center">
             <h3 className="text-lg font-semibold text-gray-800 mb-4">
               🛠️ Development Debug Tools
             </h3>
