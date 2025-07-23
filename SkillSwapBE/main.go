@@ -74,7 +74,7 @@ func main() {
 
 	// Setup CORS
 	c := cors.New(cors.Options{
-		AllowedOrigins:   []string{"http://localhost:3000", "https://*.vercel.app", "https://*.netlify.app"},
+		AllowedOrigins:   []string{"http://localhost:3000", "https://*.vercel.app", "https://*.netlify.app", "https://skillswap.softfox.com"},
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowedHeaders:   []string{"Authorization", "Content-Type"},
 		AllowCredentials: true,
