@@ -1,0 +1,45 @@
+name: Deploy SkillSwap Backend
+
+on:
+  push:
+    branches: [ master, main ]
+    paths:
+      - 'SkillSwapBE/**'
+      - 'main.go'
+      - 'go.mod'
+      - 'go.sum'
+      - 'Procfile'
+      - '.github/workflows/deploy-backend.yml'
+  pull_request:
+    branches: [ master, main ]
+    paths:
+      - 'SkillSwapBE/**'
+      - 'main.go'
+
+jobs:
+  deploy:
+    name: Deploy to Heroku
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.21'
+        
+    - name: Test backend
+      run: |
+        cd SkillSwapBE
+        go mod tidy
+        go test ./...
+        
+    - name: Deploy to Heroku
+      uses: akhileshns/heroku-deploy@v3.12.14
+      with:
+        heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+        heroku_app_name: ${{ secrets.HEROKU_APP_NAME }}
+        heroku_email: ${{ secrets.HEROKU_EMAIL }}
+        buildpack: heroku/go
