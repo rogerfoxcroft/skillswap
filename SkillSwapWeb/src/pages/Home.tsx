@@ -105,7 +105,7 @@ const Home: React.FC = () => {
       )}
 
       {/* Debug Section - Development Only */}
-      {process.env.NODE_ENV === 'development' && (
+      {import.meta.env.DEV && (
         <div className="bg-gray-100 py-8">
           <div className="mobile-container text-center">
             <h3 className="text-lg font-semibold text-gray-800 mb-4">

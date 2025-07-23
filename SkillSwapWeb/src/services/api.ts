@@ -1,4 +1,4 @@
-import { User, Skill } from '../types';
+import { Skill, UserProfile, Review } from '../types';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api/v1';
 
@@ -7,23 +7,6 @@ export interface DashboardData {
   my_skills: Skill[];
   recent_bookings: Booking[];
   stats: UserStats;
-}
-
-export interface UserProfile {
-  id: string;
-  auth0_id: string;
-  username: string;
-  email: string;
-  full_name: string;
-  location: string;
-  avatar?: string;
-  bio?: string;
-  points: number;
-  rank: string;
-  rating: number;
-  review_count: number;
-  created_at: string;
-  updated_at: string;
 }
 
 export interface UserStats {
@@ -35,18 +18,6 @@ export interface UserStats {
   rank: string;
 }
 
-export interface Review {
-  id: string;
-  reviewer_id: string;
-  reviewee_id: string;
-  booking_id?: string;
-  rating: number;
-  comment: string;
-  is_public: boolean;
-  reviewer: UserProfile;
-  created_at: string;
-  updated_at: string;
-}
 
 export interface ReviewSummary {
   average_rating: number;

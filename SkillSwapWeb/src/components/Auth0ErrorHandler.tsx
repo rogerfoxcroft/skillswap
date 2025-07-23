@@ -7,7 +7,7 @@ interface Auth0ErrorHandlerProps {
 }
 
 const Auth0ErrorHandler: React.FC<Auth0ErrorHandlerProps> = ({ children }) => {
-  const { error, isLoading } = useAuth0();
+  const { error } = useAuth0();
 
   useEffect(() => {
     if (error) {

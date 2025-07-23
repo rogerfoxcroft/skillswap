@@ -10,7 +10,6 @@ import { useDashboard } from './hooks/useApi';
 
 // Protected dashboard component
 const Dashboard: React.FC = () => {
-  const { user } = useAuth0();
   
   return (
     <div className="min-h-screen bg-gray-50">
