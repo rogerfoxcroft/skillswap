@@ -11,7 +11,6 @@ import SkillsList from './components/SkillsList';
 import RankBadge from './components/RankBadge';
 import { useDashboard } from './hooks/useApi';
 import { UserProfile, Skill } from './types';
-import { useAuth0 } from '@auth0/auth0-react';
 import { apiService } from './services/api';
 
 // Navigation component for authenticated pages
