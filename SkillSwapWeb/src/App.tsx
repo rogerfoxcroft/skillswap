@@ -16,7 +16,7 @@ const Dashboard: React.FC = () => {
       <nav className="bg-white shadow-sm border-b">
         <div className="mobile-container py-4 flex justify-between items-center">
           <div className="flex items-center space-x-3">
-            <img src="/logo.png" alt="SkillSwap" className="h-8 w-auto" />
+            <img src={`${import.meta.env.BASE_URL}logo.png`} alt="SkillSwap" className="h-8 w-auto" />
             <h1 className="text-xl font-bold text-gray-900">SkillSwap</h1>
           </div>
           <AuthButton />

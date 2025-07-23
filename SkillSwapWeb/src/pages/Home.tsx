@@ -10,7 +10,7 @@ const Home: React.FC = () => {
       {/* Hero Section */}
       <div className="mobile-container py-12">
         <div className="text-center">
-          <img src="/logo.png" alt="SkillSwap" className="h-20 w-auto mx-auto mb-6" />
+          <img src={`${import.meta.env.BASE_URL}logo.png`} alt="SkillSwap" className="h-20 w-auto mx-auto mb-6" />
           <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
             SkillSwap
           </h1>
