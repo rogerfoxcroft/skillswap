@@ -53,6 +53,7 @@ jobs:
         git init
         git config user.name "GitHub Actions"
         git config user.email "actions@github.com"
+        git checkout -b main
         
         # Add and commit all files
         git add .
