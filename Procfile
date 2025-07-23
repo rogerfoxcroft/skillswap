@@ -1,1 +1,1 @@
-web: bin/skillswap-be
+web: bin/skillswap

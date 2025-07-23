@@ -4,9 +4,9 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"skillswap-be/internal/database"
-	"skillswap-be/internal/handlers"
-	"skillswap-be/internal/middleware"
+	"skillswap/internal/database"
+	"skillswap/internal/handlers"
+	"skillswap/internal/middleware"
 
 	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
