@@ -73,12 +73,25 @@ func main() {
 	// Apply middleware
 	router.Use(middleware.LoggingMiddleware)
 
-	// Setup CORS
+	// Setup CORS - get allowed origins from environment or use defaults
+	allowedOrigins := []string{"http://localhost:3000", "https://skillswap.softfox.com"}
+	if corsOrigins := os.Getenv("CORS_ALLOWED_ORIGINS"); corsOrigins != "" {
+		// Split comma-separated origins from environment
+		allowedOrigins = append(allowedOrigins, corsOrigins)
+	}
+	// Add common deployment platforms
+	allowedOrigins = append(allowedOrigins, 
+		"https://skillswapweb.vercel.app",
+		"https://skillswapweb-git-main.vercel.app",
+		"https://skillswapweb-rogerfoxcroft.vercel.app",
+	)
+	
 	c := cors.New(cors.Options{
-		AllowedOrigins:   []string{"http://localhost:3000", "https://skillswap.softfox.com"},
+		AllowedOrigins:   allowedOrigins,
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
-		AllowedHeaders:   []string{"Authorization", "Content-Type"},
+		AllowedHeaders:   []string{"Authorization", "Content-Type", "Accept", "Origin", "X-Requested-With"},
 		AllowCredentials: true,
+		Debug:            true, // Enable CORS debugging
 	})
 
 	handler := c.Handler(router)
