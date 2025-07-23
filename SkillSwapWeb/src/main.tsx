@@ -9,13 +9,16 @@ import './index.css'
 const domain = import.meta.env.VITE_AUTH0_DOMAIN || 'dev-skillswap.us.auth0.com'
 const clientId = import.meta.env.VITE_AUTH0_CLIENT_ID || 'your-client-id'
 
+// Get the base path for GitHub Pages
+const basename = import.meta.env.PROD ? '/skillswap' : ''
+
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <Auth0Provider
       domain={domain}
       clientId={clientId}
       authorizationParams={{
-        redirect_uri: window.location.origin,
+        redirect_uri: window.location.origin + basename,
         audience: "skillswapapi",
         scope: "openid profile email"
       }}
@@ -30,7 +33,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         );
       }}
     >
-      <BrowserRouter>
+      <BrowserRouter basename={basename}>
         <App />
       </BrowserRouter>
     </Auth0Provider>

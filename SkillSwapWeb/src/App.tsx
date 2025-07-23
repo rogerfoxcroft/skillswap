@@ -1,5 +1,5 @@
 import React from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Link } from 'react-router-dom';
 import { useAuth0 } from '@auth0/auth0-react';
 import Home from './pages/Home';
 import Profile from './pages/Profile';
@@ -165,9 +165,9 @@ const DashboardContent: React.FC = () => {
         <button className="btn-secondary">
           Add New Skill
         </button>
-        <a href="/profile" className="btn-secondary text-center">
+        <Link to="/profile" className="btn-secondary text-center">
           View My Profile
-        </a>
+        </Link>
       </div>
     </div>
   );
