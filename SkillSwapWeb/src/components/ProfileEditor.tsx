@@ -3,11 +3,12 @@ import { UserProfile } from '../types';
 
 interface ProfileEditorProps {
   profile: UserProfile;
-  onSave: (updatedProfile: Partial<UserProfile>) => void;
+  onSave: (updatedProfile: Partial<UserProfile>) => Promise<void>;
   onCancel: () => void;
+  isSaving?: boolean;
 }
 
-const ProfileEditor: React.FC<ProfileEditorProps> = ({ profile, onSave, onCancel }) => {
+const ProfileEditor: React.FC<ProfileEditorProps> = ({ profile, onSave, onCancel, isSaving = false }) => {
   const [formData, setFormData] = useState({
     full_name: profile.full_name || '',
     location: profile.location || '',
@@ -15,9 +16,9 @@ const ProfileEditor: React.FC<ProfileEditorProps> = ({ profile, onSave, onCancel
     username: profile.username || '',
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    onSave(formData);
+    await onSave(formData);
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -95,10 +96,10 @@ const ProfileEditor: React.FC<ProfileEditorProps> = ({ profile, onSave, onCancel
         </div>
         
         <div className="flex space-x-4">
-          <button type="submit" className="btn-primary">
-            Save Changes
+          <button type="submit" className="btn-primary" disabled={isSaving}>
+            {isSaving ? 'Saving...' : 'Save Changes'}
           </button>
-          <button type="button" onClick={onCancel} className="btn-secondary">
+          <button type="button" onClick={onCancel} className="btn-secondary" disabled={isSaving}>
             Cancel
           </button>
         </div>

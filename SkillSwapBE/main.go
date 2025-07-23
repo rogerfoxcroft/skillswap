@@ -66,6 +66,7 @@ func main() {
 	protected.Use(middleware.EnsureUserExists()) // Automatically create users if they don't exist
 	protected.HandleFunc("/dashboard", handlers.GetUserDashboard).Methods("GET")
 	protected.HandleFunc("/profile", handlers.GetUserProfile).Methods("GET")
+	protected.HandleFunc("/profile", handlers.UpdateUserProfile).Methods("PUT")
 	protected.HandleFunc("/profile/{id}", handlers.GetUserProfile).Methods("GET")
 	protected.HandleFunc("/my-skills", handlers.GetMySkills).Methods("GET")
 

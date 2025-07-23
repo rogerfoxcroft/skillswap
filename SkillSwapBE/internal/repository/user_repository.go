@@ -49,7 +49,30 @@ func (r *UserRepository) GetUserByEmail(email string) (*models.User, error) {
 }
 
 // UpdateUser updates a user
-func (r *UserRepository) UpdateUser(user *models.User) error {
+func (r *UserRepository) UpdateUser(userID string, updateReq *models.UpdateUserRequest) error {
+	updates := make(map[string]interface{})
+	
+	if updateReq.Username != "" {
+		updates["username"] = updateReq.Username
+	}
+	if updateReq.FullName != "" {
+		updates["full_name"] = updateReq.FullName
+	}
+	if updateReq.Location != "" {
+		updates["location"] = updateReq.Location
+	}
+	if updateReq.Bio != "" {
+		updates["bio"] = updateReq.Bio
+	}
+	if updateReq.Avatar != "" {
+		updates["avatar"] = updateReq.Avatar
+	}
+	
+	return r.db.Model(&models.User{}).Where("id = ?", userID).Updates(updates).Error
+}
+
+// SaveUser saves a complete user model
+func (r *UserRepository) SaveUser(user *models.User) error {
 	return r.db.Save(user).Error
 }
 

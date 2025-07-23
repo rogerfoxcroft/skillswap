@@ -11,6 +11,8 @@ import SkillsList from './components/SkillsList';
 import RankBadge from './components/RankBadge';
 import { useDashboard } from './hooks/useApi';
 import { UserProfile, Skill } from './types';
+import { useAuth0 } from '@auth0/auth0-react';
+import { apiService } from './services/api';
 
 // Navigation component for authenticated pages
 const AuthenticatedLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -41,14 +43,26 @@ const Dashboard: React.FC = () => {
 
 // Separate component for dashboard content that uses the API
 const DashboardContent: React.FC = () => {
-  const { data, loading, error } = useDashboard();
+  const { data, loading, error, refetch } = useDashboard();
+  const { getAccessTokenSilently } = useAuth0();
   const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [currentView, setCurrentView] = useState<'overview' | 'profile' | 'skills'>('overview');
+  const [isSaving, setIsSaving] = useState(false);
 
-  const handleSaveProfile = (updatedProfile: Partial<UserProfile>) => {
-    // TODO: Implement API call to save profile
-    console.log('Saving profile:', updatedProfile);
-    setIsEditingProfile(false);
+  const handleSaveProfile = async (updatedProfile: Partial<UserProfile>) => {
+    try {
+      setIsSaving(true);
+      const token = await getAccessTokenSilently();
+      await apiService.updateProfile(token, updatedProfile);
+      setIsEditingProfile(false);
+      // Refresh the dashboard data to show updated profile
+      refetch();
+    } catch (error) {
+      console.error('Failed to update profile:', error);
+      alert('Failed to update profile. Please try again.');
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleAddSkill = (skill: Partial<Skill>) => {
@@ -212,6 +226,7 @@ const DashboardContent: React.FC = () => {
               profile={data.user}
               onSave={handleSaveProfile}
               onCancel={() => setIsEditingProfile(false)}
+              isSaving={isSaving}
             />
           ) : (
             <div className="bg-white rounded-lg shadow-md p-6">

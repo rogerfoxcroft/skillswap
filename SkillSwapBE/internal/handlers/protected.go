@@ -160,3 +160,40 @@ func GetMySkills(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(profile.Skills)
 }
+
+func UpdateUserProfile(w http.ResponseWriter, r *http.Request) {
+	// Get user from context (created by EnsureUserExists middleware)
+	user, ok := r.Context().Value("user").(*models.User)
+	if !ok {
+		http.Error(w, "Unable to get user information", http.StatusUnauthorized)
+		return
+	}
+
+	// Parse request body
+	var updateReq models.UpdateUserRequest
+	if err := json.NewDecoder(r.Body).Decode(&updateReq); err != nil {
+		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		return
+	}
+
+	// Get database connection
+	db := database.GetDB()
+	userRepo := repository.NewUserRepository(db)
+
+	// Update user profile
+	err := userRepo.UpdateUser(user.ID, &updateReq)
+	if err != nil {
+		http.Error(w, "Failed to update profile", http.StatusInternalServerError)
+		return
+	}
+
+	// Get updated profile
+	updatedProfile, err := userRepo.GetUserProfile(user.ID)
+	if err != nil {
+		http.Error(w, "Failed to get updated profile", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(updatedProfile)
+}

@@ -112,6 +112,20 @@ class ApiService {
     
     return response.json();
   }
+
+  async updateProfile(token: string, profileData: Partial<UserProfile>): Promise<UserProfile> {
+    const response = await fetch(`${API_BASE_URL}/protected/profile`, {
+      method: 'PUT',
+      headers: this.getAuthHeaders(token),
+      body: JSON.stringify(profileData),
+    });
+    
+    if (!response.ok) {
+      throw new Error(`Failed to update profile: ${response.statusText}`);
+    }
+    
+    return response.json();
+  }
 }
 
 export const apiService = new ApiService();
