@@ -21,8 +21,8 @@ type User struct {
 	ID          string         `json:"id" gorm:"primaryKey;type:uuid;default:gen_random_uuid()"`
 	Auth0ID     string         `json:"auth0_id" gorm:"uniqueIndex;not null"`
 	Username    string         `json:"username" gorm:"uniqueIndex;not null"`
-	Email       string         `json:"email" gorm:"uniqueIndex;not null"`
-	FullName    string         `json:"full_name" gorm:"not null"`
+	Email       string         `json:"email" gorm:"-"` // Not stored in DB, populated from JWT claims
+	FullName    string         `json:"full_name"`
 	Location    string         `json:"location"`
 	Avatar      string         `json:"avatar"`
 	Bio         string         `json:"bio"`
@@ -40,8 +40,7 @@ type User struct {
 
 type CreateUserRequest struct {
 	Username string `json:"username" binding:"required"`
-	Email    string `json:"email" binding:"required,email"`
-	FullName string `json:"full_name" binding:"required"`
+	FullName string `json:"full_name"`
 	Location string `json:"location"`
 	Bio      string `json:"bio"`
 }

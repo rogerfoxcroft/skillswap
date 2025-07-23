@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Skill } from '../types';
+import { formatCurrency, getCurrencySymbol, getCurrencyForLocale, parseCurrencyInput } from '../utils/currency';
 
 interface SkillsListProps {
   skills: Skill[];
@@ -54,7 +55,7 @@ const SkillsList: React.FC<SkillsListProps> = ({ skills, onAddSkill, onEditSkill
         <div>
           <label className="form-label">Category</label>
           <select
-            className="form-input"
+            className="form-select"
             value={skill.category}
             onChange={(e) => setNewSkill({ ...skill, category: e.target.value })}
             required
@@ -87,12 +88,12 @@ const SkillsList: React.FC<SkillsListProps> = ({ skills, onAddSkill, onEditSkill
         <div>
           <label className="form-label">Price per Session</label>
           <div className="relative">
-            <span className="absolute left-3 top-3 text-gray-500">$</span>
+            <span className="absolute left-3 top-3 text-gray-500">{getCurrencySymbol(getCurrencyForLocale(navigator.language))}</span>
             <input
               className="form-input pl-8"
               type="number"
               value={skill.price}
-              onChange={(e) => setNewSkill({ ...skill, price: parseFloat(e.target.value) || 0 })}
+              onChange={(e) => setNewSkill({ ...skill, price: parseCurrencyInput(e.target.value) })}
               min="0"
               step="0.01"
               required
@@ -114,7 +115,7 @@ const SkillsList: React.FC<SkillsListProps> = ({ skills, onAddSkill, onEditSkill
         <div>
           <label className="form-label">Level</label>
           <select
-            className="form-input"
+            className="form-select"
             value={skill.level}
             onChange={(e) => setNewSkill({ ...skill, level: e.target.value })}
           >
@@ -136,11 +137,11 @@ const SkillsList: React.FC<SkillsListProps> = ({ skills, onAddSkill, onEditSkill
         />
       </div>
       
-      <div className="flex space-x-4">
+      <div className="flex justify-between">
         <button type="submit" className="btn-primary">
           Save Skill
         </button>
-        <button type="button" onClick={onCancel} className="btn-secondary">
+        <button type="button" onClick={onCancel} className="btn-cancel">
           Cancel
         </button>
       </div>
@@ -151,12 +152,14 @@ const SkillsList: React.FC<SkillsListProps> = ({ skills, onAddSkill, onEditSkill
     <div className="bg-white rounded-lg shadow-md p-6">
       <div className="flex justify-between items-center mb-6">
         <h3 className="text-xl font-semibold text-gray-900">My Skills</h3>
-        <button
-          onClick={() => setShowAddForm(!showAddForm)}
-          className="btn-primary"
-        >
-          {showAddForm ? 'Cancel' : 'Add New Skill'}
-        </button>
+        {!showAddForm && (
+          <button
+            onClick={() => setShowAddForm(true)}
+            className="btn-primary"
+          >
+            Add New Skill
+          </button>
+        )}
       </div>
       
       {showAddForm && (
@@ -190,7 +193,7 @@ const SkillsList: React.FC<SkillsListProps> = ({ skills, onAddSkill, onEditSkill
                   <p className="text-gray-600 mb-3">{skill.description}</p>
                   
                   <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500">
-                    <span className="font-medium text-green-600">${skill.price}/session</span>
+                    <span className="font-medium text-green-600">{formatCurrency(skill.price)}/session</span>
                     <span>{skill.duration} min</span>
                     <span>{skill.location}</span>
                     <span>Level: {skill.level}</span>

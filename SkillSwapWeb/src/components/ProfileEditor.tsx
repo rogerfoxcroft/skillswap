@@ -95,11 +95,11 @@ const ProfileEditor: React.FC<ProfileEditorProps> = ({ profile, onSave, onCancel
           />
         </div>
         
-        <div className="flex space-x-4">
+        <div className="flex justify-between">
           <button type="submit" className="btn-primary" disabled={isSaving}>
             {isSaving ? 'Saving...' : 'Save Changes'}
           </button>
-          <button type="button" onClick={onCancel} className="btn-secondary" disabled={isSaving}>
+          <button type="button" onClick={onCancel} className="btn-cancel" disabled={isSaving}>
             Cancel
           </button>
         </div>

@@ -4,6 +4,7 @@ import { useAuth0 } from '@auth0/auth0-react';
 import { apiService, ProfileResponse } from '../services/api';
 import StarRating from '../components/StarRating';
 import RankBadge from '../components/RankBadge';
+import { formatCurrency } from '../utils/currency';
 
 const Profile: React.FC = () => {
   const { userId } = useParams<{ userId?: string }>();
@@ -152,7 +153,7 @@ const Profile: React.FC = () => {
                   <div className="flex justify-between items-start mb-2">
                     <h3 className="font-medium text-gray-900">{skill.title}</h3>
                     <span className="text-sm font-medium text-primary-600">
-                      ${skill.price}/session
+                      {formatCurrency(skill.price)}/session
                     </span>
                   </div>
                   <p className="text-sm text-gray-600 mb-2">{skill.description}</p>

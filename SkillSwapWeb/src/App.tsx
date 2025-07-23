@@ -12,6 +12,7 @@ import RankBadge from './components/RankBadge';
 import { useDashboard } from './hooks/useApi';
 import { UserProfile, Skill } from './types';
 import { apiService } from './services/api';
+import { formatCurrency } from './utils/currency';
 
 // Navigation component for authenticated pages
 const AuthenticatedLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -47,6 +48,12 @@ const DashboardContent: React.FC = () => {
   const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [currentView, setCurrentView] = useState<'overview' | 'profile' | 'skills'>('overview');
   const [isSaving, setIsSaving] = useState(false);
+
+  const handleTabChange = (newTab: 'overview' | 'profile' | 'skills') => {
+    // Reset edit states when switching tabs
+    setIsEditingProfile(false);
+    setCurrentView(newTab);
+  };
 
   const handleSaveProfile = async (updatedProfile: Partial<UserProfile>) => {
     try {
@@ -119,7 +126,7 @@ const DashboardContent: React.FC = () => {
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between">
           <div>
             <h1 className="text-3xl font-bold text-gray-900 mb-2">
-              Welcome back, {data.user.full_name || data.user.name}! 👋
+              Welcome back, {(data.user.full_name && data.user.full_name.trim()) || data.user.email}! 👋
             </h1>
             <p className="text-gray-600">Manage your profile and skills</p>
           </div>
@@ -134,11 +141,8 @@ const DashboardContent: React.FC = () => {
       </div>
 
       {/* Navigation Tabs */}
-      <div className="bg-white border border-gray-300 rounded-lg mb-8 shadow-md">
-        <div className="p-4 border-b border-gray-200">
-          <h2 className="text-lg font-semibold text-gray-900">Dashboard Sections</h2>
-        </div>
-        <nav className="flex flex-wrap gap-2 p-4" role="tablist">
+      <div className="mb-8">
+        <nav className="flex space-x-1 bg-gray-100 p-1 rounded-xl" role="tablist">
           {[
             { key: 'overview', label: 'Overview', icon: '📊' },
             { key: 'profile', label: 'My Profile', icon: '👤' },
@@ -146,16 +150,16 @@ const DashboardContent: React.FC = () => {
           ].map((tab) => (
             <button
               key={tab.key}
-              onClick={() => setCurrentView(tab.key as any)}
-              className={`flex items-center space-x-3 py-4 px-6 rounded-lg font-semibold text-base border-2 transition-all duration-200 ${
+              onClick={() => handleTabChange(tab.key as any)}
+              className={`flex items-center justify-center space-x-2 px-6 py-3 rounded-lg font-medium text-sm transition-all duration-200 flex-1 ${
                 currentView === tab.key
-                  ? 'bg-blue-600 text-white border-blue-600 shadow-lg'
-                  : 'bg-gray-50 text-gray-700 border-gray-300 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-300'
+                  ? 'bg-white text-gray-900 shadow-sm'
+                  : 'text-gray-600 hover:text-gray-900 hover:bg-white/50'
               }`}
               role="tab"
               aria-selected={currentView === tab.key}
             >
-              <span className="text-xl">{tab.icon}</span>
+              <span className="text-lg">{tab.icon}</span>
               <span>{tab.label}</span>
             </button>
           ))}
@@ -176,7 +180,7 @@ const DashboardContent: React.FC = () => {
               <div className="text-sm text-gray-600">Total Bookings</div>
             </div>
             <div className="bg-white p-6 rounded-lg shadow-md">
-              <div className="text-3xl font-bold text-blue-600 mb-2">${data.stats?.total_earnings || 0}</div>
+              <div className="text-3xl font-bold text-blue-600 mb-2">{formatCurrency(data.stats?.total_earnings || 0)}</div>
               <div className="text-sm text-gray-600">Total Earnings</div>
             </div>
             <div className="bg-white p-6 rounded-lg shadow-md">
@@ -193,7 +197,7 @@ const DashboardContent: React.FC = () => {
               {(data.my_skills || []).slice(0, 3).map((skill) => (
                 <div key={skill.id} className="border-b border-gray-200 last:border-b-0 py-3">
                   <h4 className="font-medium text-gray-900">{skill.title}</h4>
-                  <p className="text-sm text-gray-600 mt-1">{skill.category} • ${skill.price}/session</p>
+                  <p className="text-sm text-gray-600 mt-1">{skill.category} • {formatCurrency(skill.price)}/session</p>
                 </div>
               ))}
               {(data.my_skills || []).length === 0 && (
@@ -207,7 +211,7 @@ const DashboardContent: React.FC = () => {
               {(data.recent_bookings || []).slice(0, 3).map((booking) => (
                 <div key={booking.id} className="border-b border-gray-200 last:border-b-0 py-3">
                   <p className="font-medium text-gray-900">Booking #{booking.id.slice(0, 8)}</p>
-                  <p className="text-sm text-gray-600 mt-1">${booking.total_price} • {booking.status}</p>
+                  <p className="text-sm text-gray-600 mt-1">{formatCurrency(booking.total_price)} • {booking.status}</p>
                 </div>
               ))}
               {(data.recent_bookings || []).length === 0 && (

@@ -22,7 +22,7 @@ func (s *UserService) GetOrCreateUser(auth0ID, email, name string) (*models.User
 	
 	if result.Error == nil {
 		// User exists, return it
-		log.Printf("Found existing user: %s (%s)", user.Email, user.Auth0ID)
+		log.Printf("Found existing user with Auth0 ID: %s", user.Auth0ID)
 		return &user, nil
 	}
 
@@ -34,14 +34,13 @@ func (s *UserService) GetOrCreateUser(auth0ID, email, name string) (*models.User
 	
 	// Extract full name, fallback to email local part if name is empty
 	fullName := name
-	if fullName == "" {
+	if fullName == "" && email != "" {
 		fullName = strings.Split(email, "@")[0]
 	}
 
 	newUser := models.User{
 		Auth0ID:     auth0ID,
 		Username:    username,
-		Email:       email,
 		FullName:    fullName,
 		Points:      0,
 		Rank:        models.Novice,
@@ -54,7 +53,7 @@ func (s *UserService) GetOrCreateUser(auth0ID, email, name string) (*models.User
 		return nil, fmt.Errorf("failed to create user: %v", err)
 	}
 
-	log.Printf("Successfully created new user: %s (%s)", newUser.Email, newUser.Auth0ID)
+	log.Printf("Successfully created new user with Auth0 ID: %s", newUser.Auth0ID)
 	return &newUser, nil
 }
 

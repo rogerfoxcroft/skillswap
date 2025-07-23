@@ -41,6 +41,13 @@ func GetUserDashboard(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Get JWT claims for email
+	claims, err := middleware.GetUserFromContext(r.Context())
+	if err != nil {
+		http.Error(w, "Unable to get user claims", http.StatusUnauthorized)
+		return
+	}
+
 	// Get user profile with relationships
 	db := database.GetDB()
 	userRepo := repository.NewUserRepository(db)
@@ -50,6 +57,10 @@ func GetUserDashboard(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Failed to get user profile", http.StatusInternalServerError)
 		return
 	}
+
+	// Add email from JWT claims to user profile
+	profileWithEmail := *profile
+	profileWithEmail.Email = claims.Email
 
 	// Calculate user stats
 	stats := &UserStats{
@@ -62,7 +73,7 @@ func GetUserDashboard(w http.ResponseWriter, r *http.Request) {
 	}
 
 	dashboardData := DashboardData{
-		User:          profile,
+		User:          &profileWithEmail,
 		MySkills:      profile.Skills,
 		RecentBookings: []models.Booking{}, // TODO: Get recent bookings
 		Stats:         stats,
@@ -76,6 +87,8 @@ func GetUserProfile(w http.ResponseWriter, r *http.Request) {
 	// Get user ID from URL parameter or use current user
 	vars := mux.Vars(r)
 	userID := vars["id"]
+	var isCurrentUser bool
+	var currentUserClaims *middleware.CustomClaims
 	
 	// If no ID provided, get current user's profile
 	if userID == "" {
@@ -84,6 +97,8 @@ func GetUserProfile(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "Unable to get user information", http.StatusUnauthorized)
 			return
 		}
+		currentUserClaims = userClaims
+		isCurrentUser = true
 		
 		db := database.GetDB()
 		userRepo := repository.NewUserRepository(db)
@@ -94,6 +109,17 @@ func GetUserProfile(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		userID = user.ID
+	} else {
+		// Check if this is the current user's own profile
+		if userClaims, err := middleware.GetUserFromContext(r.Context()); err == nil {
+			db := database.GetDB()
+			userRepo := repository.NewUserRepository(db)
+			currentUser, err := userRepo.GetUserByAuth0ID(userClaims.Sub)
+			if err == nil && currentUser.ID == userID {
+				isCurrentUser = true
+				currentUserClaims = userClaims
+			}
+		}
 	}
 
 	// Get repositories
@@ -106,6 +132,13 @@ func GetUserProfile(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		http.Error(w, "User not found", http.StatusNotFound)
 		return
+	}
+
+	// Add email from JWT claims if this is the current user
+	if isCurrentUser && currentUserClaims != nil {
+		userWithEmail := *user
+		userWithEmail.Email = currentUserClaims.Email
+		user = &userWithEmail
 	}
 
 	// Get reviews

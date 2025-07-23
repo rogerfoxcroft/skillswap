@@ -38,16 +38,6 @@ func (r *UserRepository) GetUserByAuth0ID(auth0ID string) (*models.User, error) 
 	return &user, nil
 }
 
-// GetUserByEmail retrieves a user by email
-func (r *UserRepository) GetUserByEmail(email string) (*models.User, error) {
-	var user models.User
-	err := r.db.First(&user, "email = ?", email).Error
-	if err != nil {
-		return nil, err
-	}
-	return &user, nil
-}
-
 // UpdateUser updates a user
 func (r *UserRepository) UpdateUser(userID string, updateReq *models.UpdateUserRequest) error {
 	updates := make(map[string]interface{})
